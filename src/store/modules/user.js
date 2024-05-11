@@ -1,4 +1,6 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login } from '@/api/user'
+import { Message } from 'element-ui'
 
 const state = {
   token: getToken() //  从缓存读取
@@ -20,8 +22,16 @@ const mutations = {
 const actions = {
   async login(context, data) {
     console.log(data)
-    // 调用登录接口，返回 token
-    context.commit('setToken', data.mobile)
+    // 调用登录接口
+    const token = await login(data)
+    if (token) {
+      Message({
+        type: 'success',
+        message: '登录成功'
+      })
+    }
+    // 返回 token
+    context.commit('setToken', token)
   }
 }
 
