@@ -24,7 +24,7 @@
           <a target="_blank" href="https://github.com/Linda000420/HR">
             <el-dropdown-item>项目地址</el-dropdown-item>
           </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
+          <a target="_blank" @click.prevent="updatePassword">
             <el-dropdown-item>修改密码</el-dropdown-item>
           </a>
           <el-dropdown-item @click.native="logout">
@@ -33,6 +33,25 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <!-- 弹层 dialog 组件 -->
+    <el-dialog width="500px" :visible.sync="showDialog" :append-to-body="true" title="修改密码">
+      <!-- 表单 -->
+      <el-form label-width="120px">
+        <el-form-item label="旧密码">
+          <el-input show-password size="small" />
+        </el-form-item>
+        <el-form-item label="新密码">
+          <el-input show-password size="small" />
+        </el-form-item>
+        <el-form-item label="重新输入新密码">
+          <el-input show-password size="small" />
+        </el-form-item>
+        <el-form-item>
+          <el-button size="mini" type="primary">确认修改</el-button>
+          <el-button size="mini">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -46,6 +65,12 @@ export default {
     Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      // 控制弹层
+      showDialog: false
+    }
+  },
   computed: {
     // 引入头像和用户名称
     ...mapGetters([
@@ -58,9 +83,14 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
+    // 退出
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login`)
+    },
+    // 修改密码
+    updatePassword() {
+      this.showDialog = true
     }
   }
 }
