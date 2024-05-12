@@ -2,6 +2,7 @@ const getters = {
   sidebar: state => state.app.sidebar, //  取 app 模块属性
   device: state => state.app.device,
   token: state => state.user.token, //  取 user 模块属性
+  userId: state => state.user.userInfo.userId,
   avatar: state => state.user.avatar,
   name: state => state.user.name
 }

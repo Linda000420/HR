@@ -7,7 +7,7 @@ import store from '@/store'
 const whiteList = ['/login', '404']
 
 // 前置守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   // 开启进度条
   nprogress.start()
   // 判断有无 token
@@ -18,6 +18,10 @@ router.beforeEach((to, from, next) => {
       // 关闭进度条
       nprogress.done()
     } else {
+      // 判断是否获取过资料
+      if (!store.getters.userId) {
+        await store.dispatch('user/getUserInfo')
+      }
       next()
     }
   } else {

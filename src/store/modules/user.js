@@ -1,9 +1,10 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { login } from '@/api/user'
+import { login, userGetUserService } from '@/api/user'
 import { Message } from 'element-ui'
 
 const state = {
-  token: getToken() //  从缓存读取
+  token: getToken(), //  从缓存读取
+  userInfo: {} //  用户基本信息
 }
 
 const mutations = {
@@ -16,12 +17,14 @@ const mutations = {
     // 删除 Vues 和缓存的 token
     state.token = null
     removeToken()
+  },
+  setUserInfo(state, userInfo) {
+    state.userInfo = userInfo
   }
 }
 
 const actions = {
   async login(context, data) {
-    console.log(data)
     // 调用登录接口
     const token = await login(data)
     if (token) {
@@ -32,6 +35,10 @@ const actions = {
     }
     // 返回 token
     context.commit('setToken', token)
+  },
+  async getUserInfo(context) {
+    const res = await userGetUserService()
+    context.commit('setUserInfo', res)
   }
 }
 

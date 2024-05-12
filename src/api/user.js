@@ -8,3 +8,8 @@ export function login(data) {
     data
   })
 }
+
+// 获取用户基本资料
+export function userGetUserService() {
+  return request.get('/sys/profile')
+}
