@@ -13,3 +13,8 @@ export function login(data) {
 export function userGetUserService() {
   return request.get('/sys/profile')
 }
+
+// 修改密码
+export function userUpdatePasswordService(data) {
+  return request.put('/sys/user/updatePass', data)
+}

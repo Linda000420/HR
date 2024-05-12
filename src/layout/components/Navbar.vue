@@ -34,7 +34,7 @@
       </el-dropdown>
     </div>
     <!-- 弹层 dialog 组件 -->
-    <el-dialog width="500px" :visible.sync="showDialog" :append-to-body="true" title="修改密码">
+    <el-dialog width="500px" :visible.sync="showDialog" :append-to-body="true" title="修改密码" @close="btnCancel">
       <!-- 表单 -->
       <el-form ref="passForm" :model="passForm" :rules="rules" label-width="120px">
         <el-form-item label="旧密码" prop="oldPassword">
@@ -47,8 +47,8 @@
           <el-input v-model="passForm.confirmPassword" show-password size="small" />
         </el-form-item>
         <el-form-item>
-          <el-button size="mini" type="primary">确认修改</el-button>
-          <el-button size="mini">取消</el-button>
+          <el-button size="mini" type="primary" @click="btnOK">确认修改</el-button>
+          <el-button size="mini" @click="btnCancel">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -59,6 +59,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { userUpdatePasswordService } from '@/api/user'
 
 export default {
   components: {
@@ -74,6 +75,7 @@ export default {
         newPassword: '',
         confirmPassword: ''
       },
+      // 表单规则
       rules: {
         oldPassword: [
           { required: true, message: '旧密码不能为空', trigger: 'blur' }
@@ -138,6 +140,26 @@ export default {
     // 修改密码
     updatePassword() {
       this.showDialog = true
+    },
+    // 确认
+    btnOK() {
+      console.log('ok')
+      // 表单校验
+      this.$refs.passForm.validate(async(isOK) => {
+        if (isOK) {
+          // 校验通过
+          await userUpdatePasswordService(this.passForm)
+          this.$message.success('修改成功')
+          this.btnCancel()
+        }
+      })
+    },
+    // 取消
+    btnCancel() {
+      // 重置表单
+      this.$refs.passForm.resetFields()
+      // 关闭弹层
+      this.showDialog = false
     }
   }
 }
