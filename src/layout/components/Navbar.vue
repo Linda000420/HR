@@ -36,15 +36,15 @@
     <!-- 弹层 dialog 组件 -->
     <el-dialog width="500px" :visible.sync="showDialog" :append-to-body="true" title="修改密码">
       <!-- 表单 -->
-      <el-form label-width="120px">
-        <el-form-item label="旧密码">
-          <el-input show-password size="small" />
+      <el-form ref="passForm" :model="passForm" :rules="rules" label-width="120px">
+        <el-form-item label="旧密码" prop="oldPassword">
+          <el-input v-model="passForm.oldPassword" show-password size="small" />
         </el-form-item>
-        <el-form-item label="新密码">
-          <el-input show-password size="small" />
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input v-model="passForm.newPassword" show-password size="small" />
         </el-form-item>
-        <el-form-item label="重新输入新密码">
-          <el-input show-password size="small" />
+        <el-form-item label="重新输入新密码" prop="confirmPassword">
+          <el-input v-model="passForm.confirmPassword" show-password size="small" />
         </el-form-item>
         <el-form-item>
           <el-button size="mini" type="primary">确认修改</el-button>
@@ -68,7 +68,54 @@ export default {
   data() {
     return {
       // 控制弹层
-      showDialog: false
+      showDialog: false,
+      passForm: {
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      },
+      rules: {
+        oldPassword: [
+          { required: true, message: '旧密码不能为空', trigger: 'blur' }
+        ],
+        newPassword: [
+          { required: true, message: '新密码不能为空', trigger: 'blur' },
+          { min: 6, max: 15, message: '新密码长度为 6-10 位字符之间', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (this.passForm.oldPassword !== value) {
+                callback()
+              } else {
+                callback(new Error('新密码不能与旧密码一致'))
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        confirmPassword: [
+          { required: true, message: '重复密码不能为空', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (this.passForm.newPassword === value) {
+                callback()
+              } else {
+                callback(new Error('重复密码与新密码不一致'))
+              }
+            },
+            trigger: 'blur'
+          },
+          {
+            validator: (rule, value, callback) => {
+              if (this.passForm.oldPassword !== value) {
+                callback()
+              } else {
+                callback(new Error('新密码不能与旧密码一致'))
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+      }
     }
   },
   computed: {
