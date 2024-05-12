@@ -10,8 +10,7 @@
       </el-form-item>
       <el-form-item label="部门负责人" prop="managerId">
         <el-select v-model="formData.managerId" size="mini" style="width: 80%" placeholder="请选择负责人">
-          <el-option label="Zone one" value="shanghai" />
-          <el-option label="Zone two" value="beijing" />
+          <el-option v-for="item in managerList" :key="item.id" :label="item.username" :value="item.id" />
         </el-select>
       </el-form-item>
       <el-form-item prop="introduce" label="部门介绍">
@@ -30,7 +29,7 @@
 </template>
 
 <script>
-import { depGetDepartment } from '@/api/department'
+import { depGetDepartment, depGetManagerList } from '@/api/department'
 export default {
   props: {
     showDialog: {
@@ -40,6 +39,7 @@ export default {
   },
   data() {
     return {
+      managerList: {}, //  部门负责人列表
       formData: {
         name: '', //  部门名称
         code: '', //  部门编码
@@ -88,9 +88,16 @@ export default {
       }
     }
   },
+  created() {
+    this.getManagerList()
+  },
   methods: {
     close() {
       this.$emit('update:showDialog', false)
+    },
+    // 获取部门负责人列表
+    async getManagerList() {
+      this.managerList = await depGetManagerList()
     }
   }
 }
