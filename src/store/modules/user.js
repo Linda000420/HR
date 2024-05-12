@@ -13,7 +13,7 @@ const mutations = {
     // 同步到缓存
     setToken(token)
   },
-  removeToken() {
+  removeToken(state) {
     // 删除 Vues 和缓存的 token
     state.token = null
     removeToken()
@@ -36,9 +36,17 @@ const actions = {
     // 返回 token
     context.commit('setToken', token)
   },
+  // 获取用户基本资料
   async getUserInfo(context) {
     const res = await userGetUserService()
     context.commit('setUserInfo', res)
+  },
+  // 退出登录
+  logout(context) {
+    // 删除 token
+    context.commit('removeToken')
+    // 删除用户信息
+    context.commit('setUserInfo', {})
   }
 }
 
