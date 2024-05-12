@@ -5,12 +5,12 @@ export function depGetDepartment() {
   return request.get('/company/department')
 }
 
-// 增加部门
-export function depAddDepartment(data) {
-  return request.post('/company/department', data)
-}
-
 // 获取部门负责人列表
 export function depGetManagerList() {
   return request.get('/sys/user/simple')
+}
+
+// 增加部门
+export function depAddDepartment(data) {
+  return request.post('/company/department', data)
 }
