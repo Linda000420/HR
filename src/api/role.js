@@ -12,3 +12,8 @@ export function roleGetRoleList(params) {
 export function roleAddRole(data) {
   return request.post('/sys/role', data)
 }
+
+// 修改角色
+export function roleUpdateRole(data) {
+  return request.put(`/sys/role/${data.id}`, data)
+}

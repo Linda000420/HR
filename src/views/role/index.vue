@@ -9,27 +9,27 @@
       <el-table :data="roleList">
         <el-table-column prop="name" width="200" align="center" label="角色">
           <template v-slot="{ row }">
-            <el-input v-if="row.isEdit" size="mini" />
+            <el-input v-if="row.isEdit" v-model="row.editRow.name" size="mini" />
             <span v-else>{{ row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="state" width="200" align="center" label="启用">
           <template v-slot="{ row }">
-            <el-switch v-if="row.isEdit" size="mini" />
+            <el-switch v-if="row.isEdit" v-model="row.editRow.state" :active-value="1" :inactive-value="0" size="mini" />
             <span v-else>{{ row.state === 1 ? "已启用" : row.state === 0 ? "未启用" : "无" }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="description" align="center" label="描述">
           <template v-slot="{ row }">
-            <el-input v-if="row.isEdit" type="textarea" size="mini" />
+            <el-input v-if="row.isEdit" v-model="row.editRow.description" type="textarea" size="mini" />
             <span v-else>{{ row.description }}</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作">
           <template v-slot="{ row }">
             <template v-if="row.isEdit">
-              <el-button type="primary" size="mini">确定</el-button>
-              <el-button size="mini">取消</el-button>
+              <el-button type="primary" size="mini" @click="btnEditOk(row)">确定</el-button>
+              <el-button size="mini" @click="btnCancelEdit(row)">取消</el-button>
             </template>
             <template v-else>
               <el-button type="text" size="mini">分配权限</el-button>
@@ -76,7 +76,7 @@
   </div>
 </template>
 <script>
-import { roleGetRoleList, roleAddRole } from '@/api/role'
+import { roleGetRoleList, roleAddRole, roleUpdateRole } from '@/api/role'
 
 export default {
   name: 'Role',
@@ -116,6 +116,11 @@ export default {
       // 针对每一行增加编辑标记
       this.roleList.forEach(item => {
         this.$set(item, 'isEdit', false)
+        this.$set(item, 'editRow', {
+          name: item.name,
+          state: item.state,
+          description: item.description
+        })
       })
     },
     // 切换页码
@@ -147,6 +152,27 @@ export default {
     // 编辑按钮
     btnEditRow(row) {
       row.isEdit = true
+      row.editRow.name = row.name
+      row.editRow.state = row.state
+      row.editRow.description = row.description
+    },
+    // 确定编辑
+    async btnEditOk(row) {
+      if (row.editRow.name && row.editRow.description) {
+        await roleUpdateRole({ ...row.editRow, id: row.id })
+        this.$message.success('编辑成功')
+        // 更新显示数据
+        Object.assign(row, {
+          ...row.editRow,
+          isEdit: false
+        })
+      } else {
+        this.$message.warning('角色名称和角色描述不能为空')
+      }
+    },
+    // 取消编辑
+    btnCancelEdit(row) {
+      row.isEdit = false
     }
   }
 }
