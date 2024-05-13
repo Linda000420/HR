@@ -14,3 +14,8 @@ export function depGetManagerList() {
 export function depAddDepartment(data) {
   return request.post('/company/department', data)
 }
+
+// 获取部门信息详情
+export function depGetDepartmentInfo(id) {
+  return request.get(`/company/department/${id}`)
+}

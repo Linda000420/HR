@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { depGetDepartment, depGetManagerList, depAddDepartment } from '@/api/department'
+import { depGetDepartment, depGetManagerList, depAddDepartment, depGetDepartmentInfo } from '@/api/department'
 export default {
   props: {
     showDialog: {
@@ -117,6 +117,10 @@ export default {
           this.close()
         }
       })
+    },
+    // 获取部门信息详情
+    async getDepartmentInfo() {
+      this.formData = await depGetDepartmentInfo(this.currentNodeId)
     }
   }
 }

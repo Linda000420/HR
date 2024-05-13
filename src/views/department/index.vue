@@ -31,7 +31,7 @@
       </el-tree>
     </div>
     <!-- 弹层 -->
-    <add-dept :current-node-id="currentNodeId" :show-dialog.sync="showDialog" @updateDepartment="getDepartment" />
+    <add-dept ref="addDept" :current-node-id="currentNodeId" :show-dialog.sync="showDialog" @updateDepartment="getDepartment" />
   </div>
 </template>
 <script>
@@ -69,6 +69,13 @@ export default {
       if (type === 'add') {
         this.currentNodeId = id
         this.showDialog = true
+      } else if (type === 'edit') {
+        // 编辑部门
+        this.showDialog = true
+        this.currentNodeId = id
+        this.$nextTick(() => {
+          this.$refs.addDept.getDepartmentInfo()
+        })
       }
     }
   }
