@@ -34,7 +34,9 @@
             <template v-else>
               <el-button type="text" size="mini">分配权限</el-button>
               <el-button type="text" size="mini" @click="btnEditRow(row)">编辑</el-button>
-              <el-button type="text" size="mini">删除</el-button>
+              <el-popconfirm title="您确认要删除吗？" @onConfirm="confirmDel(row.id)">
+                <el-button slot="reference" style="margin-left: 10px" type="text" size="mini">删除</el-button>
+              </el-popconfirm>
             </template>
           </template>
         </el-table-column>
@@ -76,7 +78,7 @@
   </div>
 </template>
 <script>
-import { roleGetRoleList, roleAddRole, roleUpdateRole } from '@/api/role'
+import { roleGetRoleList, roleAddRole, roleUpdateRole, roleDelRole } from '@/api/role'
 
 export default {
   name: 'Role',
@@ -173,6 +175,13 @@ export default {
     // 取消编辑
     btnCancelEdit(row) {
       row.isEdit = false
+    },
+    // 确认删除
+    async confirmDel(id) {
+      await roleDelRole(id)
+      this.$message.success('删除成功')
+      if (this.roleList.length === 1) this.pageParams.page--
+      this.getRoleList()
     }
   }
 }

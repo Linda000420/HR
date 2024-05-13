@@ -17,3 +17,8 @@ export function roleAddRole(data) {
 export function roleUpdateRole(data) {
   return request.put(`/sys/role/${data.id}`, data)
 }
+
+// 删除角色
+export function roleDelRole(id) {
+  return request.delete(`/sys/role/${id}`)
+}
