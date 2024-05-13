@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="新增部门" :visible="showDialog" @close="close">
+  <el-dialog :title="formData.id ? '编辑部门' : '新增部门'" :visible="showDialog" @close="close">
     <!-- 内容 -->
     <el-form ref="addDept" :model="formData" :rules="rules" label-width="120px">
       <el-form-item label="部门名称" prop="name">
@@ -57,7 +57,11 @@ export default {
           { min: 2, max: 10, message: '请输入 2-10 个字符', trigger: 'blur' },
           {
             validator: async(rule, value, callback) => {
-              const res = await depGetDepartment()
+              let res = await depGetDepartment()
+              // 判断是否编辑
+              if (this.formData.id) {
+                res = res.filter(item => item.id !== this.formData.id)
+              }
               if (res.some(item => item.name === value)) {
                 callback(new Error('部门名称重复'))
               } else {
@@ -72,7 +76,11 @@ export default {
           { min: 2, max: 10, message: '请输入 2-10 个字符', trigger: 'blur' },
           {
             validator: async(rule, value, callback) => {
-              const res = await depGetDepartment()
+              let res = await depGetDepartment()
+              // 判断是否编辑
+              if (this.formData.id) {
+                res = res.filter(item => item.id !== this.formData.id)
+              }
               if (res.some(item => item.code === value)) {
                 callback(new Error('部门编码重复'))
               } else {
