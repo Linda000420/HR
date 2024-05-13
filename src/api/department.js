@@ -24,3 +24,8 @@ export function depGetDepartmentInfo(id) {
 export function depEditDepartmentInfo(data) {
   return request.put(`/company/department/${data.id}`, data)
 }
+
+// 删除部门
+export function depDelDepartment(id) {
+  return request.delete(`/company/department/${id}`)
+}
