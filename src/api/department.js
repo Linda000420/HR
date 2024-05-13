@@ -19,3 +19,8 @@ export function depAddDepartment(data) {
 export function depGetDepartmentInfo(id) {
   return request.get(`/company/department/${id}`)
 }
+
+// 修改部门详情
+export function depEditDepartmentInfo(data) {
+  return request.put(`/company/department/${data.id}`, data)
+}
