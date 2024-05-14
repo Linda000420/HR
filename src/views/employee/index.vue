@@ -2,7 +2,15 @@
   <div class="container">
     <div class="app-container">
       <div class="left">
-        <el-input style="margin-bottom:10px" type="text" prefix-icon="el-icon-search" size="small" placeholder="输入员工姓名全员搜索" />
+        <el-input
+          v-model="queryParams.keyword"
+          style="margin-bottom:10px"
+          type="text"
+          prefix-icon="el-icon-search"
+          size="small"
+          placeholder="输入员工姓名全员搜索"
+          @input="searchEmployee"
+        />
         <!-- 树形组件 -->
         <el-tree
           ref="deptTree"
@@ -52,6 +60,9 @@
           <el-pagination
             layout="total, prev, pager, next"
             :total="total"
+            :current-page="queryParams.page"
+            :page-size="queryParams.pagesize"
+            @current-change="changePage"
           />
         </el-row>
       </div>
@@ -75,10 +86,11 @@ export default {
       queryParams: {
         departmentId: null, //  部门id
         page: 1, //  当前页码数
-        pagesize: 10 //  一页的数据数量
+        pagesize: 10, //  一页的数据数量
+        keyword: '' //  关键词
       },
       employeeList: [], //  员工列表
-      total: 0 //  数据总数
+      total: 0 //  员工总数
     }
   },
   created() {
@@ -97,6 +109,7 @@ export default {
     // 选中节点，记录 id
     selectNode(node) {
       this.queryParams.departmentId = node.id
+      this.queryParams.page = 1
       this.getEmployeeList()
     },
     // 获取员工列表
@@ -104,6 +117,20 @@ export default {
       const { total, rows } = await empGetEmployeeList(this.queryParams)
       this.employeeList = rows
       this.total = total
+    },
+    // 切换页码
+    changePage(newPage) {
+      this.queryParams.page = newPage
+      this.getEmployeeList()
+    },
+    // 搜索员工
+    searchEmployee() {
+      // 清理上一次定时器
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.queryParams.page = 1
+        this.getEmployeeList()
+      }, 500)
     }
   }
 }
