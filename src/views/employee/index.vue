@@ -22,7 +22,38 @@
           <el-button size="mini">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
+        <el-table :data="employeeList">
+          <el-table-column prop="staffPhoto" align="center" label="头像">
+            <template v-slot="{ row }">
+              <el-avatar v-if="row.staffPhoto" :src="row.staffPhoto" :size="30" />
+              <span v-else class="username">{{ row.username.charAt(0) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="username" align="center" label="姓名" />
+          <el-table-column prop="mobile" sortable align="center" label="手机号" />
+          <el-table-column prop="workNumber" sortable align="center" label="工号" />
+          <el-table-column prop="formOfEmployment" align="center" label="聘用形式">
+            <template v-slot="{ row }">
+              <span>{{ row.formOfEmployment === 1 ? '正式' : row.formOfEmployment === 2 ? '非正式' : '无' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="departmentName" align="center" label="部门" />
+          <el-table-column prop="timeOfEntry" sortable align="center" label="入职时间" />
+          <el-table-column align="center" width="280px" label="操作">
+            <template>
+              <el-button size="mini" type="text">查看</el-button>
+              <el-button size="mini" type="text">角色</el-button>
+              <el-button size="mini" type="text">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
         <!-- 分页 -->
+        <el-row type="flex" justify="end" align="middle" style="height: 60px">
+          <el-pagination
+            layout="total, prev, pager, next"
+            :total="total"
+          />
+        </el-row>
       </div>
     </div>
   </div>
@@ -31,11 +62,12 @@
 <script>
 import { depGetDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils'
+import { empGetEmployeeList } from '@/api/employee'
 export default {
   name: 'Employee',
   data() {
     return {
-      deptList: {}, //  部门数据
+      deptList: [], //  部门数据
       defaultProps: {
         label: 'name',
         children: 'children'
@@ -43,8 +75,10 @@ export default {
       queryParams: {
         departmentId: null, //  部门id
         page: 1, //  当前页码数
-        pagesize: 5 //  一页的数据数量
-      }
+        pagesize: 10 //  一页的数据数量
+      },
+      employeeList: [], //  员工列表
+      total: 0 //  数据总数
     }
   },
   created() {
@@ -58,10 +92,18 @@ export default {
         // 设置选中节点
         this.$refs.deptTree.setCurrentKey(this.queryParams.departmentId)
       })
+      this.getEmployeeList()
     },
     // 选中节点，记录 id
     selectNode(node) {
       this.queryParams.departmentId = node.id
+      this.getEmployeeList()
+    },
+    // 获取员工列表
+    async getEmployeeList() {
+      const { total, rows } = await empGetEmployeeList(this.queryParams)
+      this.employeeList = rows
+      this.total = total
     }
   }
 }
