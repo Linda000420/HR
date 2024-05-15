@@ -26,7 +26,7 @@
       <div class="right">
         <el-row class="opeate-tools" type="flex" justify="end">
           <el-button size="mini" type="primary">添加员工</el-button>
-          <el-button size="mini">excel导入</el-button>
+          <el-button size="mini" @click="showExcelDialog = true">excel导入</el-button>
           <el-button size="mini" @click="exportEmployee">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
@@ -67,6 +67,8 @@
         </el-row>
       </div>
     </div>
+    <!-- 导入弹层 -->
+    <import-excel :show-excel-dialog.sync="showExcelDialog" @uplodaSuccess="getEmployeeList" />
   </div>
 </template>
 
@@ -75,8 +77,12 @@ import { depGetDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils'
 import { empGetEmployeeList, empExportEmployee } from '@/api/employee'
 import FileSaver from 'file-saver'
+import ImportExcel from './components/import-excel.vue'
 export default {
   name: 'Employee',
+  components: {
+    ImportExcel
+  },
   data() {
     return {
       deptList: [], //  部门数据
@@ -91,7 +97,8 @@ export default {
         keyword: '' //  关键词
       },
       employeeList: [], //  员工列表
-      total: 0 //  员工总数
+      total: 0, //  员工总数
+      showExcelDialog: false //  控制导入文件弹层
     }
   },
   created() {

@@ -16,3 +16,17 @@ export function empExportEmployee() {
     responseType: 'blob'
   })
 }
+
+// 下载导入员工模板
+export function empGetTemplate() {
+  return request({
+    url: '/sys/user/import/template',
+    // 使用 blob 接收二进制文件流
+    responseType: 'blob'
+  })
+}
+
+// 上传文件
+export function empUploadExcel(data) {
+  return request.post('/sys/user/import', data)
+}
