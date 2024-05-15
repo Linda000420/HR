@@ -180,7 +180,7 @@ export default {
     async confirmDel(id) {
       await roleDelRole(id)
       this.$message.success('删除成功')
-      if (this.roleList.length === 1) this.pageParams.page--
+      if (this.roleList.length === 1 && this.pageParams.page > 1) this.pageParams.page--
       this.getRoleList()
     }
   }

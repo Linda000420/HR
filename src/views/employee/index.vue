@@ -48,10 +48,14 @@
           <el-table-column prop="departmentName" align="center" label="部门" />
           <el-table-column prop="timeOfEntry" sortable align="center" label="入职时间" />
           <el-table-column align="center" width="280px" label="操作">
-            <template>
+            <template v-slot="{ row }">
               <el-button size="mini" type="text">查看</el-button>
               <el-button size="mini" type="text">角色</el-button>
-              <el-button size="mini" type="text">删除</el-button>
+              <el-popconfirm title="您确认要删除吗？" @onConfirm="del(row.id)">
+                <template #reference>
+                  <el-button size="mini" type="text">删除</el-button>
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -75,7 +79,7 @@
 <script>
 import { depGetDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils'
-import { empGetEmployeeList, empExportEmployee } from '@/api/employee'
+import { empGetEmployeeList, empExportEmployee, empDelEmployee } from '@/api/employee'
 import FileSaver from 'file-saver'
 import ImportExcel from './components/import-excel.vue'
 export default {
@@ -96,7 +100,7 @@ export default {
         pagesize: 10, //  一页的数据数量
         keyword: '' //  关键词
       },
-      employeeList: [], //  员工列表
+      employeeList: [], //  当前页员工列表
       total: 0, //  员工总数
       showExcelDialog: false //  控制导入文件弹层
     }
@@ -105,6 +109,7 @@ export default {
     this.getDepartment()
   },
   methods: {
+    // 获取部门
     async getDepartment() {
       this.deptList = transListToTreeData(await depGetDepartment(), 0)
       this.queryParams.departmentId = this.deptList[0].id
@@ -145,6 +150,13 @@ export default {
       const res = await empExportEmployee()
       // 下载文件
       FileSaver.saveAs(res, '员工信息表.xlsx')
+    },
+    // 删除员工
+    async del(id) {
+      await empDelEmployee(id)
+      if (this.employeeList.length === 1 && this.queryParams.page > 1) this.queryParams.page--
+      this.$message.success('删除成功')
+      this.getEmployeeList()
     }
   }
 }

@@ -30,3 +30,8 @@ export function empGetTemplate() {
 export function empUploadExcel(data) {
   return request.post('/sys/user/import', data)
 }
+
+// 删除员工
+export function empDelEmployee(id) {
+  return request.delete(`/sys/user/${id}`)
+}
