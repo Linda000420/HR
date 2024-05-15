@@ -35,3 +35,8 @@ export function empUploadExcel(data) {
 export function empDelEmployee(id) {
   return request.delete(`/sys/user/${id}`)
 }
+
+// 新增员工
+export function empAddEmployee(data) {
+  return request.post('/sys/user', data)
+}
