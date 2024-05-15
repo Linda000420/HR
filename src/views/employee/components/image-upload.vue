@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import COS from 'cos-js-sdk-v5'
+// import COS from 'cos-js-sdk-v5'
 export default {
   props: {
     value: {
@@ -39,27 +39,27 @@ export default {
     uploadImage(params) {
       console.log(params.file)
       // cos 对象初始化
-      const cos = new COS({
-        SecretId: 'AKIDEMK7iZcoaBcsvhJjx40QhGzfJqAHAxdQ',
-        SecretKey: '77xYz2xjLmFeu01veFiDXecXS5yjMtO5'
-      })
-      cos.putObject({
-        Bucket: 'linns-1326604282', //  存储桶名称
-        Region: 'ap-guangzhou', //  地域名称
-        Key: params.file.name, //  文件名称
-        StorageClass: 'STANDARD', //  固定值
-        Body: params.file //  文件对象
-      }, (err, data) => {
-        // err 错误信息， data 返回值
-        if (data.statusCode === 200 && data.Location) {
-          // 拿到腾讯云返回的地址后通过 input 自定义事件传出去
-          // 返回地址
-          this.$emit('input', 'http://' + data.Location)
-        } else {
-          // 失败信息
-          this.$message.error(err.Message)
-        }
-      })
+    //   const cos = new COS({
+    //     SecretId: 'AKIDEMK7iZcoaBcsvhJjx40QhGzfJqAHAxdQ',
+    //     SecretKey: '77xYz2xjLmFeu01veFiDXecXS5yjMtO5'
+    //   })
+    //   cos.putObject({
+    //     Bucket: 'linns-1326604282', //  存储桶名称
+    //     Region: 'ap-guangzhou', //  地域名称
+    //     Key: params.file.name, //  文件名称
+    //     StorageClass: 'STANDARD', //  固定值
+    //     Body: params.file //  文件对象
+    //   }, (err, data) => {
+    //     // err 错误信息， data 返回值
+    //     if (data.statusCode === 200 && data.Location) {
+    //       // 拿到腾讯云返回的地址后通过 input 自定义事件传出去
+    //       // 返回地址
+    //       this.$emit('input', 'http://' + data.Location)
+    //     } else {
+    //       // 失败信息
+    //       this.$message.error(err.Message)
+    //     }
+    //   })
     }
   }
 }
