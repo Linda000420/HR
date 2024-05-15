@@ -86,6 +86,7 @@
             <el-col :span="12">
               <el-form-item label="员工头像">
                 <!-- 放置上传图片 -->
+                <import-upload v-model="employeeList.staffPhoto" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -105,10 +106,12 @@
 <script>
 import { empAddEmployee, empGetEmployeeInfo, empUpdateEmployee } from '@/api/employee'
 import SelectTree from './components/select-tree.vue'
+import ImportUpload from './components/image-upload.vue'
 
 export default {
   components: {
-    SelectTree
+    SelectTree,
+    ImportUpload
   },
   data() {
     return {
