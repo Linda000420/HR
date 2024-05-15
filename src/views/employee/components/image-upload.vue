@@ -12,7 +12,6 @@
 </template>
 
 <script>
-// import COS from 'cos-js-sdk-v5'
 export default {
   props: {
     value: {
@@ -44,11 +43,11 @@ export default {
     //     SecretKey: '77xYz2xjLmFeu01veFiDXecXS5yjMtO5'
     //   })
     //   cos.putObject({
-    //     Bucket: 'linns-1326604282', //  存储桶名称
-    //     Region: 'ap-guangzhou', //  地域名称
-    //     Key: params.file.name, //  文件名称
+    //     Bucket: '', //  存储桶名称
+    //     Region: '', //  地域名称
+    //     Key: , //  文件名称
     //     StorageClass: 'STANDARD', //  固定值
-    //     Body: params.file //  文件对象
+    //     Body:  //  文件对象
     //   }, (err, data) => {
     //     // err 错误信息， data 返回值
     //     if (data.statusCode === 200 && data.Location) {
