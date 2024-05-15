@@ -40,3 +40,13 @@ export function empDelEmployee(id) {
 export function empAddEmployee(data) {
   return request.post('/sys/user', data)
 }
+
+// 获取员工基本信息
+export function empGetEmployeeInfo(id) {
+  return request.get(`/sys/user/${id}`)
+}
+
+// 修改员工信息
+export function empUpdateEmployee(data) {
+  return request.put(`/sys/user/${data.id}`, data)
+}

@@ -7,7 +7,12 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="姓名" prop="username">
-                <el-input v-model="employeeList.username" size="mini" class="inputW" />
+                <el-input
+                  v-model="employeeList.username"
+                  size="mini"
+                  class="inputW"
+                  :disabled="!!$route.params.id"
+                />
               </el-form-item>
             </el-col>
 
@@ -28,6 +33,7 @@
                   v-model="employeeList.mobile"
                   size="mini"
                   class="inputW"
+                  :disabled="!!$route.params.id"
                 />
               </el-form-item>
             </el-col>
@@ -97,7 +103,7 @@
 </template>
 
 <script>
-import { empAddEmployee } from '@/api/employee'
+import { empAddEmployee, empGetEmployeeInfo, empUpdateEmployee } from '@/api/employee'
 import SelectTree from './components/select-tree.vue'
 
 export default {
@@ -151,17 +157,31 @@ export default {
       }
     }
   },
+  created() {
+    // 获取路由参数的id
+    this.$route.params.id && this.getEmployeeInfo()
+  },
   methods: {
     // 保存员工
     saveData() {
       this.$refs.employeeForm.validate(async isOK => {
         if (isOK) {
-          // 新增员工
-          await empAddEmployee(this.employeeList)
-          this.$message.success('添加成功')
+          if (this.$route.params.id) {
+            // 修改员工信息
+            await empUpdateEmployee(this.employeeList)
+            this.$message.success('修改成功')
+          } else {
+            // 新增员工
+            await empAddEmployee(this.employeeList)
+            this.$message.success('添加成功')
+          }
           this.$router.push('/employee')
         }
       })
+    },
+    // 获取员工基本信息
+    async getEmployeeInfo() {
+      this.employeeList = await empGetEmployeeInfo(this.$route.params.id)
     }
   }
 }

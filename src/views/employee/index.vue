@@ -25,7 +25,7 @@
       </div>
       <div class="right">
         <el-row class="opeate-tools" type="flex" justify="end">
-          <el-button size="mini" type="primary" @click="goDetail">添加员工</el-button>
+          <el-button size="mini" type="primary" @click="$router.push('/employee/detail')">添加员工</el-button>
           <el-button size="mini" @click="showExcelDialog = true">excel导入</el-button>
           <el-button size="mini" @click="exportEmployee">excel导出</el-button>
         </el-row>
@@ -49,7 +49,11 @@
           <el-table-column prop="timeOfEntry" sortable align="center" label="入职时间" />
           <el-table-column align="center" width="280px" label="操作">
             <template v-slot="{ row }">
-              <el-button size="mini" type="text">查看</el-button>
+              <el-button
+                size="mini"
+                type="text"
+                @click="$router.push(`/employee/detail/${row.id}`)"
+              >查看</el-button>
               <el-button size="mini" type="text">角色</el-button>
               <el-popconfirm style="margin-left: 10px" title="您确认要删除吗？" @onConfirm="del(row.id)">
                 <template #reference>
@@ -157,10 +161,6 @@ export default {
       if (this.employeeList.length === 1 && this.queryParams.page > 1) this.queryParams.page--
       this.$message.success('删除成功')
       this.getEmployeeList()
-    },
-    // 跳转员工详情
-    goDetail() {
-      this.$router.push('/employee/detail')
     }
   }
 }
