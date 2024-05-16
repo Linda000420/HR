@@ -32,7 +32,7 @@
               <el-button size="mini" @click="btnCancelEdit(row)">取消</el-button>
             </template>
             <template v-else>
-              <el-button type="text" size="mini">分配权限</el-button>
+              <el-button type="text" size="mini" @click="btnPermission(row.id)">分配权限</el-button>
               <el-button type="text" size="mini" @click="btnEditRow(row)">编辑</el-button>
               <el-popconfirm title="您确认要删除吗？" @onConfirm="confirmDel(row.id)">
                 <el-button slot="reference" style="margin-left: 10px" type="text" size="mini">删除</el-button>
@@ -75,10 +75,31 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!-- 分配权限弹层 -->
+    <el-dialog :visible.sync="showPerDialog" title="分配权限">
+      <el-tree
+        ref="permTree"
+        :data="permissionList"
+        :props="{ label: 'name' }"
+        node-key="id"
+        :default-checked-keys="permIds"
+        show-checkbox
+        default-expand-all
+        check-strictly
+      />
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button size="mini" type="primary" @click="btnAssign">确认</el-button>
+          <el-button size="mini" @click="showPerDialog = false">取消</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { roleGetRoleList, roleAddRole, roleUpdateRole, roleDelRole } from '@/api/role'
+import { roleGetRoleList, roleAddRole, roleUpdateRole, roleDelRole, roleGetRoleInfo, roleAssignPrem } from '@/api/role'
+import { getPermissionList } from '@/api/permission'
+import { transListToTreeData } from '@/utils'
 
 export default {
   name: 'Role',
@@ -87,7 +108,7 @@ export default {
       roleList: [], //  角色列表
       pageParams: {
         page: 1, //  所在页数
-        pagesize: 5, //  每页展示数量
+        pagesize: 10, //  每页展示数量
         total: 0 //  角色总数
       },
       showDialog: false, //  控制弹层显示隐藏
@@ -103,7 +124,11 @@ export default {
         description: [
           { required: true, message: '角色描述不能为空', trigger: 'blur' }
         ]
-      }
+      },
+      showPerDialog: false, //  控制分配权限弹层
+      permissionList: [], //  权限列表
+      permIds: [], //  角色选中权限列表
+      currId: '' //  选中id
     }
   },
   created() {
@@ -182,6 +207,20 @@ export default {
       this.$message.success('删除成功')
       if (this.roleList.length === 1 && this.pageParams.page > 1) this.pageParams.page--
       this.getRoleList()
+    },
+    // 分配权限按钮
+    async btnPermission(id) {
+      this.currId = id
+      const { permIds } = await roleGetRoleInfo(id)
+      this.permIds = permIds
+      this.permissionList = transListToTreeData(await getPermissionList(), 0)
+      this.showPerDialog = true
+    },
+    // 分配权限确定按钮
+    async btnAssign() {
+      await roleAssignPrem({ id: this.currId, permIds: this.$refs.permTree.getCheckedKeys() })
+      this.$message.success('分配成功')
+      this.showPerDialog = false
     }
   }
 }

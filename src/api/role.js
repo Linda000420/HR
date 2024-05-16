@@ -22,3 +22,13 @@ export function roleUpdateRole(data) {
 export function roleDelRole(id) {
   return request.delete(`/sys/role/${id}`)
 }
+
+// 获取角色详情
+export function roleGetRoleInfo(id) {
+  return request.get(`/sys/role/${id}`)
+}
+
+// 分配权限
+export function roleAssignPrem(data) {
+  return request.put('/sys/role/assignPrem', data)
+}
