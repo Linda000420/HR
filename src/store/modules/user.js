@@ -1,10 +1,12 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { login, userGetUserService } from '@/api/user'
 import { Message } from 'element-ui'
+import { constantRoutes } from '@/router'
 
 const state = {
   token: getToken(), //  从缓存读取
-  userInfo: {} //  用户基本信息
+  userInfo: {}, //  用户基本信息
+  routes: constantRoutes //  静态路由的数组
 }
 
 const mutations = {
@@ -20,6 +22,9 @@ const mutations = {
   },
   setUserInfo(state, userInfo) {
     state.userInfo = userInfo
+  },
+  setRoutes(state, newRoutes) {
+    state.routes = [...constantRoutes, ...newRoutes]
   }
 }
 

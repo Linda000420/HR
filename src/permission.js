@@ -27,6 +27,7 @@ router.beforeEach(async(to, from, next) => {
         const filterRoutes = asyncRoutes.filter(item => {
           return roles.menus.includes(item.name)
         })
+        store.commit('user/setRoutes', filterRoutes)
         // 添加动态路由信息到路由表
         router.addRoutes([
           ...filterRoutes,
