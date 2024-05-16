@@ -54,7 +54,7 @@
                 type="text"
                 @click="$router.push(`/employee/detail/${row.id}`)"
               >查看</el-button>
-              <el-button size="mini" type="text">角色</el-button>
+              <el-button size="mini" type="text" @click="btnRole(row.id)">角色</el-button>
               <el-popconfirm style="margin-left: 10px" title="您确认要删除吗？" @onConfirm="del(row.id)">
                 <template #reference>
                   <el-button size="mini" type="text">删除</el-button>
@@ -77,13 +77,28 @@
     </div>
     <!-- 导入弹层 -->
     <import-excel :show-excel-dialog.sync="showExcelDialog" @uplodaSuccess="getEmployeeList" />
+    <el-dialog title="分配角色" :visible.sync="showRoleDialog">
+      <el-checkbox-group v-model="roleIds">
+        <el-checkbox
+          v-for="item in roleList"
+          :key="item.id"
+          :label="item.id"
+        >{{ item.name }}</el-checkbox>
+      </el-checkbox-group>
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="5">
+          <el-button size="mini" type="primary" @click="btnAssign">确定</el-button>
+          <el-button size="mini" @click="showRoleDialog = false">取消</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { depGetDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils'
-import { empGetEmployeeList, empExportEmployee, empDelEmployee } from '@/api/employee'
+import { empGetEmployeeList, empExportEmployee, empDelEmployee, empGetEnabledRoleList, empGetEmployeeInfo, empAssignRoles } from '@/api/employee'
 import FileSaver from 'file-saver'
 import ImportExcel from './components/import-excel.vue'
 export default {
@@ -106,7 +121,11 @@ export default {
       },
       employeeList: [], //  当前页员工列表
       total: 0, //  员工总数
-      showExcelDialog: false //  控制导入文件弹层
+      showExcelDialog: false, //  控制导入文件弹层
+      showRoleDialog: false, //  控制角色弹层
+      roleList: [], //  可启用角色列表
+      roleIds: [],
+      currentUserId: '' //  记录当前用户id
     }
   },
   created() {
@@ -161,6 +180,20 @@ export default {
       if (this.employeeList.length === 1 && this.queryParams.page > 1) this.queryParams.page--
       this.$message.success('删除成功')
       this.getEmployeeList()
+    },
+    // 角色按钮
+    async btnRole(id) {
+      this.roleList = await empGetEnabledRoleList()
+      this.currentUserId = id
+      const { roleIds } = await empGetEmployeeInfo(this.currentUserId)
+      this.roleIds = roleIds
+      this.showRoleDialog = true
+    },
+    // 分配角色
+    async btnAssign() {
+      await empAssignRoles({ id: this.currentUserId, roleIds: this.roleIds })
+      this.$message.success('分配成功')
+      this.showRoleDialog = false
     }
   }
 }

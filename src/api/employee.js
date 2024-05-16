@@ -50,3 +50,13 @@ export function empGetEmployeeInfo(id) {
 export function empUpdateEmployee(data) {
   return request.put(`/sys/user/${data.id}`, data)
 }
+
+// 获取可启用的角色列表
+export function empGetEnabledRoleList() {
+  return request.get('/sys/role/list/enabled')
+}
+
+// 分配角色
+export function empAssignRoles(data) {
+  return request.put('/sys/user/assignRoles', data)
+}
