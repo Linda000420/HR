@@ -35,6 +35,20 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+// 注册自定义指令，控制功能权限
+Vue.directive('permission', {
+  // 在指令作用的元素插入 dom 之后执行
+  inserted(el, binding) {
+    // el：当前指令作用的 dom 元素对象
+    // binding：v-permission="表达式" 表达式的信息
+    const points = store.state.user.userInfo?.roles?.points || []
+    if (!points.includes(binding.value)) {
+      el.remove()
+      el.disabled = true
+    }
+  }
+})
+
 new Vue({
   el: '#app',
   router,
