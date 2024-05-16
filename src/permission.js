@@ -2,6 +2,7 @@ import router from '@/router'
 import nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
 import store from '@/store'
+import { asyncRoutes } from '@/router'
 
 // 白名单列表
 const whiteList = ['/login', '404']
@@ -20,9 +21,23 @@ router.beforeEach(async(to, from, next) => {
     } else {
       // 判断是否获取过资料
       if (!store.getters.userId) {
-        await store.dispatch('user/getUserInfo')
+        // 获取用户权限
+        const { roles } = await store.dispatch('user/getUserInfo')
+        // 筛选符合权限的路由
+        const filterRoutes = asyncRoutes.filter(item => {
+          return roles.menus.includes(item.name)
+        })
+        // 添加动态路由信息到路由表
+        router.addRoutes([
+          ...filterRoutes,
+          // 404 page must be placed at the end !!!
+          { path: '*', redirect: '/404', hidden: true }
+        ])
+        // 转发，让路由拥有信息
+        next(to.path)
+      } else {
+        next()
       }
-      next()
     }
   } else {
     if (whiteList.includes(to.path)) {

@@ -40,6 +40,7 @@ const actions = {
   async getUserInfo(context) {
     const res = await userGetUserService()
     context.commit('setUserInfo', res)
+    return res
   },
   // 退出登录
   logout(context) {
